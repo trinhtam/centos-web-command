@@ -1,0 +1,21 @@
+# systemctl stop firewalld
+# systemctl mask firewalld
+# yum install iptables-services
+# systemctl enable iptables
+
+****Open port
+# iptables -A INPUT -p tcp -m tcp --dport 9200 -j ACCEPT
+# service iptables save
+
+****Deny port
+# iptables -A INPUT -p tcp --destination-port [port number] -j DROP
+# service iptables save
+
+-To block the port only on a specific interface use the -i option.
+# iptables -A INPUT -i [interface name] -p tcp --destination-port [port number] -j DROP
+# service iptables save
+
+-To block port only for given IP or Subnet use the -s option to specify the subnet or IP addess.
+# iptables -A INPUT -i [interface name] -p tcp --destination-port [port number] -s [ip address] -j DROP
+# iptables -A INPUT -i [interface name] -p tcp --destination-port [port number] -s [ip subnet] -j DROP
+# service iptables save
