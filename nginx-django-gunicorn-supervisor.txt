@@ -1,0 +1,86 @@
+*****Install gunicorn
+# pip install gunicorn
+
+*****Install supervisor
+Check version: https://github.com/Supervisor/supervisor/releases
+
+# wget https://github.com/Supervisor/supervisor/archive/3.3.4.tar.gz
+# tar -zxvf 3.3.4.tar.gz
+# cd supervisor-3.3.4
+# python setup.py install
+
+# mkdir /etc/supervisord.d
+# nano /etc/supervisord.d/tamtt.conf
+
+-add to file
+`````````````````
+[supervisord]
+nodaemon=true
+
+[program:tamtt_gunicorn]
+command = /etc/start_project_prod.sh                    ; Command to start app
+user = nginx                                                     ; User to run as
+stdout_logfile = /home/www/tamtt/logs/gunicorn.log   ; Where to write log messages
+redirect_stderr = true                                                ; Save stderr in the same log
+environment=LANG=en_US.UTF-8,LC_ALL=en_US.UTF-8                       ; Set UTF-8 as default encoding
+
+`````````````````
+
+# nano /etc/supervisord.conf
+
+- add to end file
+`````````````````
+[include]
+files = /etc/supervisord.d/*.conf
+
+`````````````````
+
+# nano /etc/start_project_prod.sh
+
+-add to file
+`````````````````
+#!/bin/bash
+
+NAME="tamtt_api"                                  # Name of the application
+
+# Django project directory
+DJANGODIR=/home/www/tamtt             # Django project directory
+USER=nginx                                        # the user to run as
+GROUP=nginx                                     # the group to run as
+NUM_WORKERS=3                                     # how many worker processes should Gunicorn spawn
+DJANGO_SETTINGS_MODULE=itamtt_api.settings.prod           # which settings file should Django use
+DJANGO_WSGI_MODULE=itamtt_api.wsgi                     # WSGI module name
+
+echo "Starting $NAME as `whoami`"
+
+export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
+export PYTHONPATH=$DJANGODIR:$HOME
+
+# Create the run directory if it doesn't exist
+RUNDIR=$(dirname $SOCKFILE)
+test -d $RUNDIR || mkdir -p $RUNDIR
+
+# Start your Django Unicorn
+# Programs meant to be run under supervisor should not daemonize themselves (do not use --daemon)
+exec gunicorn ${DJANGO_WSGI_MODULE}:application \
+    --name $NAME \
+    --user=$USER --group=$GROUP \
+    --bind :8800 \
+    --workers $NUM_WORKERS \
+    --log-level=debug \
+    --log-file=-
+
+`````````````````
+
+# chmod +x /etc/start_project_prod.sh
+# supervisord -c /etc/supervisord.conf
+# supervisorctl update
+# supervisorctl reload
+
+# start program
+# supervisorctl start tamtt_gunicorn
+
+# restart program
+# supervisorctl restart tamtt_gunicorn
+
+
