@@ -46,15 +46,18 @@ gpgcheck=1
 
 #yum install -y php php-fpm php-mysqlnd php-mcrypt php-mbstring php-pecl-memcached php-pecl-apcu php-gd php-imap php-ldap php-odbc php-snmp php-soap php-tidy php-xmlrpc php-pecl-zip php-gd php-process php-intl
 
+*****Add user www-data
+sudo useradd -d /home/www -G www-data www-data
+
 # nano /etc/php-fpm.d/www.conf
 
 -edit
 ````````````````````````
-user = nginx
-group = nginx
-listen = /var/run/php71.sock
-listen.owner = nginx
-listen.group = nginx
+user = www-data
+group = www-data
+listen = /var/run/php.sock
+listen.owner = www-data
+listen.group = www-data
 listen.mode = 0660
 `````````````````````````
 
@@ -126,8 +129,11 @@ server {
 `````````````````
 
 # mkdir -p /home/www/tamit.info
-# chown -R nginx:nginx /home/www
-
+# chgrp -R www-data /home/www
+# chmod -R 770 /home/www
+# chmod -R g+w /home/www
+# chmod g+s /home/www
+# systemctl restart nginx
 *****Install Let's encrypt
 
 # yum install certbot-nginx -y
