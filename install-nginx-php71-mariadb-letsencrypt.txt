@@ -39,25 +39,22 @@ gpgcheck=1
 
 *****Install PHP 7.1
 
-# yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-# yum install http://rpms.remirepo.net/enterprise/remi-release-7.rpm
-# yum install yum-utils
+# yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -y
+# yum install http://rpms.remirepo.net/enterprise/remi-release-7.rpm -y
+# yum install yum-utils -y
 # yum-config-manager --enable remi-php71
 
 #yum install -y php php-fpm php-mysqlnd php-mcrypt php-mbstring php-pecl-memcached php-pecl-apcu php-gd php-imap php-ldap php-odbc php-snmp php-soap php-tidy php-xmlrpc php-pecl-zip php-gd php-process php-intl
-
-*****Add user www-data
-sudo useradd -d /home/www -G www-data www-data
 
 # nano /etc/php-fpm.d/www.conf
 
 -edit
 ````````````````````````
-user = www-data
-group = www-data
+user = nginx
+group = nginx
 listen = /var/run/php.sock
-listen.owner = www-data
-listen.group = www-data
+listen.owner = nginx
+listen.group = nginx
 listen.mode = 0660
 `````````````````````````
 
@@ -129,7 +126,7 @@ server {
 `````````````````
 
 # mkdir -p /home/www/tamit.info
-# chgrp -R www-data /home/www
+# chgrp -R nginx /home/www
 # chmod -R 770 /home/www
 # chmod -R g+w /home/www
 # chmod g+s /home/www
