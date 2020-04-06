@@ -18,33 +18,18 @@ SELINUX=enforcing > disabled
 # systemctl start nginx
 # systemctl enable nginx
 
-*****Install MariaDB 10
+*****Install MariaDB
 
-# nano /etc/yum.repos.d/MariaDB.repo
-
--add to file
-`````````````````
-[mariadb]
-name = MariaDB
-baseurl = http://yum.mariadb.org/10.1/centos7-amd64
-gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
-gpgcheck=1
-`````````````````
--then
-
-# yum install MariaDB-server MariaDB-client -y
+# yum install mariadb-server mariadb -y
 # systemctl start mariadb
 # mysql_secure_installation
 # systemctl enable mariadb
 
-*****Install PHP 7.1
+*****Install PHP 7.2
 
-# yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -y
-# yum install http://rpms.remirepo.net/enterprise/remi-release-7.rpm -y
-# yum install yum-utils -y
-# yum-config-manager --enable remi-php71
-
-# yum install -y php php-fpm php-mysqlnd php-mcrypt php-mbstring php-pecl-memcached php-pecl-apcu php-gd php-imap php-ldap php-odbc php-snmp php-soap php-tidy php-xmlrpc php-pecl-zip php-gd php-process php-intl
+# yum module install php:7.2
+# yum install -y php php-fpm php-mysqlnd php-mbstring php-pecl-apcu php-gd php-ldap php-odbc php-snmp php-soap php-xmlrpc php-gd php-process php-intl
+# systemctl enable php-fpm
 
 # nano /etc/php-fpm.d/www.conf
 
@@ -131,15 +116,12 @@ server {
 # chmod -R g+w /home/www
 # chmod g+s /home/www
 # systemctl restart nginx
-*****Install Let's encrypt
 
-# yum install certbot-nginx -y
-# iptables -I INPUT -p tcp -m tcp --dport 80 -j ACCEPT
-# iptables -I INPUT -p tcp -m tcp --dport 443 -j ACCEPT
-# certbot --nginx -d tamit.info
+*****Open port
 
-
-*****Auto renew Let's encrypt
-# crontab -e
-# 15 3 * * * /usr/bin/certbot renew --quiet
-
+# yum install firewalld -y
+# systemctl start firewalld
+# systemctl enable firewalld
+# firewall-cmd --permanent --zone=public --add-service=http
+# firewall-cmd --permanent --zone=public --add-service=https
+# systemctl reload firewalld
