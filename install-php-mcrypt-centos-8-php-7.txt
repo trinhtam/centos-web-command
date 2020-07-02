@@ -1,0 +1,16 @@
+# wget https://pecl.php.net/get/mcrypt-1.0.3.tgz
+# tar xvf mcrypt-1.0.3.tgz
+# cd mcrypt-1.0.3
+# yum install php-devel -y
+# phpize
+# ./configure --with-php-config=/usr/bin/php-config7.2
+# make
+# make install
+
+#####
+add "extension=mcrypt" to php.ini file
+restart php
+
+# cd ..
+# rm -rf mcrypt-1.0.3 mcrypt-1.0.3.tgz
+
